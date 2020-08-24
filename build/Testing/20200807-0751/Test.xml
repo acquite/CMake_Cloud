@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="Linux-x86_64-linux-gnu-g++-7"
+	BuildStamp="20200807-0751-Experimental"
+	Name="work-Ray"
+	Generator="ctest-3.10.2"
+	CompilerName="/usr/bin/x86_64-linux-gnu-g++-7"
+	CompilerVersion="7.5.0"
+	OSName="Linux"
+	Hostname="work-Ray"
+	OSRelease="5.4.0-42-generic"
+	OSVersion="#46~18.04.1-Ubuntu SMP Fri Jul 10 07:21:24 UTC 2020"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="158"
+	ProcessorCacheSize="16384"
+	NumberOfLogicalCPU="16"
+	NumberOfPhysicalCPU="8"
+	TotalVirtualMemory="2047"
+	TotalPhysicalMemory="31867"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="4392.87"
+	>
+	<Testing>
+		<StartDateTime>Aug 07 17:48 CST</StartDateTime>
+		<StartTestTime>1596793705</StartTestTime>
+		<TestList/>
+		<EndDateTime>Aug 07 17:48 CST</EndDateTime>
+		<EndTestTime>1596793705</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>
