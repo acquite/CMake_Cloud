@@ -13,6 +13,8 @@
 #include <cmath>
 #include "neuv_defs.hpp"
 
+#include"T_PCL.h"
+
 using namespace std;
 
 template <typename T>
@@ -451,5 +453,8 @@ int main(int, char **)
     int idis=(int)dis;
     std::cout<<"距离参考："<<idis<<std::endl;
 #endif
+
+     test2();
+
      return 0;
 }

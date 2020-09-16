@@ -9,7 +9,7 @@ find_package(OpenCV REQUIRED)
 
 
 #PCL
-find_package(PCL 1.8 REQUIRED COMPONENTS common io)
+find_package(PCL 1.8 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS} )
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
@@ -42,7 +42,8 @@ add_executable(eigenTest main.cpp T_PCL.cpp)
 
 target_link_libraries(eigenTest "${TORCH_LIBRARIES}")
 target_link_libraries(eigenTest "${OpenCV_LIBS}")
-target_link_libraries(eigenTest ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
+#target_link_libraries(eigenTest ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
+target_link_libraries(eigenTest ${PCL_LIBRARIES})
 target_link_libraries(eigenTest neuvsdk)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
