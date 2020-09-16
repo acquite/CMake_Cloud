@@ -406,7 +406,7 @@ int G_TestNeuvSdk()
      return 0;
 }
 
-int main(int, char **)
+int main(int argc, char ** argv)
 {
      std::cout << "==================Start ===============\n";
 
@@ -454,7 +454,7 @@ int main(int, char **)
     std::cout<<"距离参考："<<idis<<std::endl;
 #endif
 
-     test2();
+     test3( argc,  argv);
 
      return 0;
 }

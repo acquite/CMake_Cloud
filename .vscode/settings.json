@@ -5,6 +5,7 @@
     ],
     "cmake.configureOnOpen": true,
     "files.associations": {
-        "dense": "cpp"
+        "dense": "cpp",
+        "iostream": "cpp"
     }
 }
