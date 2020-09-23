@@ -37,7 +37,7 @@ enable_testing()
 # message(STATUS "    libraries: ${OpenCV_LIBS}")
 # message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
-add_executable(eigenTest main.cpp T_PCL.cpp)
+add_executable(eigenTest main.cpp T_PCL.cpp T_Eigen.cpp)
 
 
 target_link_libraries(eigenTest "${TORCH_LIBRARIES}")

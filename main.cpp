@@ -8,12 +8,13 @@
 
 #include <pcl-1.8/pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
-#include<pcl/visualization/cloud_viewer.h>
+#include <pcl/visualization/cloud_viewer.h>
 
 #include <cmath>
 #include "neuv_defs.hpp"
 
-#include"T_PCL.h"
+#include "T_PCL.h"
+#include "T_Eigen.h"
 
 using namespace std;
 
@@ -406,7 +407,7 @@ int G_TestNeuvSdk()
      return 0;
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
      std::cout << "==================Start ===============\n";
 
@@ -454,7 +455,12 @@ int main(int argc, char ** argv)
     std::cout<<"距离参考："<<idis<<std::endl;
 #endif
 
-     test3( argc,  argv);
+     // test3( argc,  argv);
+     // test_passThrough();
+     // test_Integral();
+
+     // test_Narf(argc, argv);
+     T_EigenRoation();
 
      return 0;
 }
