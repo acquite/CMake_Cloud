@@ -482,3 +482,9 @@ void test_Narf(int argc, char **argv)
     pcl_sleep(0.01);
   }
 }
+
+//视图特征直方图
+void test_VFH()
+{
+
+}

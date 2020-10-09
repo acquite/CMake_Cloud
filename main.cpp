@@ -467,7 +467,7 @@ int main(int argc, char **argv)
 
 //-------STL--------
 #include "T_STL.h"
-     T_StlTest();
-
+     // T_StlTest();
+     TStlTest2();
      return 0;
 }

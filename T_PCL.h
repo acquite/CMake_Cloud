@@ -46,3 +46,9 @@ void setViewerPose(pcl::visualization::PCLVisualizer &viewer, const Eigen::Affin
 
 //Narf 【19】
 void test_Narf(int argc, char **argv);
+
+
+//VFH
+#include<pcl/point_types.h>
+#include<pcl/features/vfh.h>
+void test_VFH();
