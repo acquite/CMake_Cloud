@@ -455,19 +455,27 @@ int main(int argc, char **argv)
     std::cout<<"距离参考："<<idis<<std::endl;
 #endif
 
+//--------------PCL-----------------
      // test3( argc,  argv);
      // test_passThrough();
      // test_Integral();
 
      // test_Narf(argc, argv);
+     // test_VFH();
+     // test_momentEst( argc, argv);
 
-     //-------Eigen--------------
+     //rops_feature---points_pcd---indices_txt---triangles_txt
+     // test_rops(argc, argv);
+
+     test_passThrough2();
+
+//-------Eigen--------------
      // T_EigenRoation();
      // T_EigrnTest1();
 
 //-------STL--------
 #include "T_STL.h"
      // T_StlTest();
-     TStlTest2();
+     // TStlTest2();
      return 0;
 }

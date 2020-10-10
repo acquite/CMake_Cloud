@@ -52,3 +52,24 @@ void test_Narf(int argc, char **argv);
 #include<pcl/point_types.h>
 #include<pcl/features/vfh.h>
 void test_VFH();
+
+//MomentOfInertiaEstimation 目标
+#include <vector>
+#include <thread>
+#include <pcl/features/moment_of_inertia_estimation.h>
+#include <iostream>
+void test_momentEst(int argc, char** argv);
+
+//RoPs
+#include <pcl/features/rops_estimation.h>
+void test_rops(int argc, char** argv);
+
+//GASD-pcl18 不支持
+#include <pcl/features/grsd.h>
+void test_gasd();
+
+//passThrough
+#include<pcl/filters/passthrough.h>
+void test_passThrough2();
+
+//voxelgrid

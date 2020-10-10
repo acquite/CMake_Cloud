@@ -486,5 +486,184 @@ void test_Narf(int argc, char **argv)
 //视图特征直方图
 void test_VFH()
 {
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>());
 
+  pcl::VFHEstimation<pcl::PointXYZ,pcl::Normal,pcl::VFHSignature308> vfh;
+  vfh.setInputCloud(cloud);
+  vfh.setInputNormals(normals);
+
+  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
+  vfh.setSearchMethod(tree);
+
+  pcl::PointCloud<pcl::VFHSignature308>::Ptr vfhs(new pcl::PointCloud<pcl::VFHSignature308>());
+
+  vfh.compute(*vfhs);
+
+}
+
+void test_momentEst(int argc, char** argv)
+{
+  if (argc != 2)
+    return ;
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
+
+  if(pcl::io::loadPCDFile(argv[1],*cloud)==-1)
+    return;
+
+  pcl::MomentOfInertiaEstimation<pcl::PointXYZ> feature_extractor;
+  feature_extractor.setInputCloud(cloud);
+  feature_extractor.compute ();
+
+  std::vector <float> moment_of_inertia;
+  std::vector <float> eccentricity;
+
+  pcl::PointXYZ min_point_AABB;
+  pcl::PointXYZ max_point_AABB;
+  pcl::PointXYZ min_point_OBB;
+  pcl::PointXYZ max_point_OBB;
+  pcl::PointXYZ position_OBB;
+  Eigen::Matrix3f rotational_matrix_OBB;
+  float major_value, middle_value, minor_value;
+  Eigen::Vector3f major_vector, middle_vector, minor_vector;
+  Eigen::Vector3f mass_center;
+
+  feature_extractor.getMomentOfInertia (moment_of_inertia);
+  feature_extractor.getEccentricity (eccentricity);
+  feature_extractor.getAABB (min_point_AABB, max_point_AABB);
+  feature_extractor.getOBB (min_point_OBB, max_point_OBB, position_OBB, rotational_matrix_OBB);
+  feature_extractor.getEigenValues (major_value, middle_value, minor_value);
+  feature_extractor.getEigenVectors (major_vector, middle_vector, minor_vector);
+  feature_extractor.getMassCenter (mass_center);
+
+  pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+  viewer->setBackgroundColor (0, 0, 0);
+  viewer->addCoordinateSystem (1.0);
+  viewer->initCameraParameters ();
+  viewer->addPointCloud<pcl::PointXYZ> (cloud, "sample cloud");
+  viewer->addCube (min_point_AABB.x, max_point_AABB.x, min_point_AABB.y, max_point_AABB.y, min_point_AABB.z, max_point_AABB.z, 1.0, 1.0, 0.0, "AABB");
+  viewer->setShapeRenderingProperties(pcl::visualization::PCL_VISUALIZER_REPRESENTATION, pcl::visualization::PCL_VISUALIZER_REPRESENTATION_WIREFRAME, "AABB");
+
+  Eigen::Vector3f position (position_OBB.x, position_OBB.y, position_OBB.z);
+  Eigen::Quaternionf quat (rotational_matrix_OBB);
+  viewer->addCube (position, quat, max_point_OBB.x - min_point_OBB.x, max_point_OBB.y - min_point_OBB.y, max_point_OBB.z - min_point_OBB.z, "OBB");
+  viewer->setShapeRenderingProperties(pcl::visualization::PCL_VISUALIZER_REPRESENTATION, pcl::visualization::PCL_VISUALIZER_REPRESENTATION_WIREFRAME, "OBB");
+
+  pcl::PointXYZ center (mass_center (0), mass_center (1), mass_center (2));
+  pcl::PointXYZ x_axis (major_vector (0) + mass_center (0), major_vector (1) + mass_center (1), major_vector (2) + mass_center (2));
+  pcl::PointXYZ y_axis (middle_vector (0) + mass_center (0), middle_vector (1) + mass_center (1), middle_vector (2) + mass_center (2));
+  pcl::PointXYZ z_axis (minor_vector (0) + mass_center (0), minor_vector (1) + mass_center (1), minor_vector (2) + mass_center (2));
+  viewer->addLine (center, x_axis, 1.0f, 0.0f, 0.0f, "major eigen vector");
+  viewer->addLine (center, y_axis, 0.0f, 1.0f, 0.0f, "middle eigen vector");
+  viewer->addLine (center, z_axis, 0.0f, 0.0f, 1.0f, "minor eigen vector");
+
+  while(!viewer->wasStopped())
+  {
+    viewer->spinOnce (100);
+    // std::this_thread::sleep_for(100);
+    pcl_sleep(0.01);
+  }
+}
+
+
+void test_rops(int argc, char** argv)
+{
+  if (argc != 4)
+    return;
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());
+  if (pcl::io::loadPCDFile (argv[1], *cloud) == -1)
+    return ;
+  
+  pcl::PointIndicesPtr indices(new pcl::PointIndices);
+  std::ifstream indices_file;
+  indices_file.open(argv[2], std::ifstream::in);
+  for (std::string line; std::getline (indices_file, line);)
+  {
+    std::istringstream in(line);
+    unsigned int index = 0;
+    in>>index;
+    indices->indices.push_back (index - 1);
+  }
+  indices_file.close ();
+
+  std::vector <pcl::Vertices> triangles;
+  std::ifstream triangles_file;
+  triangles_file.open (argv[3], std::ifstream::in);
+  for (std::string line; std::getline (triangles_file, line);)
+  {
+    pcl::Vertices triangle;
+    std::istringstream in (line);
+    unsigned int vertex = 0;
+    in >> vertex;
+    triangle.vertices.push_back (vertex - 1);
+    in >> vertex;
+    triangle.vertices.push_back (vertex - 1);
+    triangles.push_back (triangle);
+  }
+
+  float support_radius = 0.0285f;
+  unsigned int number_of_partition_bins = 5;
+  unsigned int number_of_rotations = 3;
+
+  pcl::search::KdTree<pcl::PointXYZ>::Ptr search_method (new pcl::search::KdTree<pcl::PointXYZ>);
+  search_method->setInputCloud (cloud);
+
+  pcl::ROPSEstimation <pcl::PointXYZ, pcl::Histogram <135> > feature_estimator;
+  feature_estimator.setSearchMethod (search_method);
+  feature_estimator.setSearchSurface (cloud);
+  feature_estimator.setInputCloud (cloud);
+  feature_estimator.setIndices (indices);
+  feature_estimator.setTriangles (triangles);
+  feature_estimator.setRadiusSearch (support_radius);
+  feature_estimator.setNumberOfPartitionBins (number_of_partition_bins);
+  feature_estimator.setNumberOfRotations (number_of_rotations);
+  feature_estimator.setSupportRadius (support_radius);
+
+  pcl::PointCloud<pcl::Histogram <135> >::Ptr histograms (new pcl::PointCloud <pcl::Histogram <135> > ());
+  feature_estimator.compute (*histograms);
+}
+
+void test_gasd()
+{
+  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
+   // 创建GASD估计类，并将输入数据集传递给它
+
+}
+
+void test_passThrough2()
+{
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
+
+  //填充点云数据
+  cloud->width  = 5;
+  cloud->height = 1;
+  cloud->points.resize (cloud->width * cloud->height);
+
+  for (size_t i = 0; i < cloud->points.size (); ++i)
+  {
+    cloud->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
+    cloud->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
+    cloud->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
+  }
+
+  std::cerr << "Cloud before filtering: " << std::endl;
+  for (size_t i = 0; i < cloud->points.size (); ++i)
+  std::cerr << "    " << cloud->points[i].x << " " 
+                        << cloud->points[i].y << " " 
+                        << cloud->points[i].z << std::endl;
+
+  // 创建筛选对象
+  pcl::PassThrough<pcl::PointXYZ> pass;
+  pass.setInputCloud (cloud);
+  pass.setFilterFieldName ("z");
+  pass.setFilterLimits (0.0, 1.0);
+  //pass.setFilterLimitsNegative (true);
+  pass.filter (*cloud_filtered);
+
+  std::cerr << "Cloud after filtering: " << std::endl;
+  for (size_t i = 0; i < cloud_filtered->points.size (); ++i)
+  std::cerr << "    " << cloud_filtered->points[i].x << " " 
+                        << cloud_filtered->points[i].y << " " 
+                        << cloud_filtered->points[i].z << std::endl;
 }
