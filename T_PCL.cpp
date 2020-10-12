@@ -667,3 +667,105 @@ void test_passThrough2()
                         << cloud_filtered->points[i].y << " " 
                         << cloud_filtered->points[i].z << std::endl;
 }
+
+void test_voxelGrid()
+{
+  pcl::PCLPointCloud2::Ptr cloud(new pcl::PCLPointCloud2());
+  pcl::PCLPointCloud2::Ptr cloud_filtered(new pcl::PCLPointCloud2());
+
+  //填充点云数据
+  pcl::PCDReader reader;
+  // 将下面的路径替换为您保存文件的路径
+  reader.read("../data/table_scene_lms400.pcd",*cloud);
+  std::cerr<<"PointCloud before filtering:"<<cloud->width*cloud->height<<"data points("<<pcl::getFieldsList(*cloud)<<").";
+
+  //创建筛选对象
+  pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
+  sor.setInputCloud(cloud);
+  // 叶子大小为1cm
+  sor.setLeafSize(0.01f,0.01f,0.01f);
+  sor.filter(*cloud_filtered);
+  std::cerr<<"PointCloud after filtering:"<<cloud_filtered->width*cloud_filtered->height<<"data points("<<pcl::getFieldsList(*cloud_filtered)<<").";
+
+  pcl::PCDWriter writer;
+  writer.write("table_scene_lms400_downsampled.pcd",*cloud_filtered,Eigen::Vector4f::Zero(),Eigen::Quaternionf::Identity(),false);
+
+}
+
+void test_statistical()
+{
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
+
+
+   //填充点云数据
+  pcl::PCDReader reader;
+  //将下面的路径替换为您保存文件的路径
+  reader.read<pcl::PointXYZ> ("../data/table_scene_lms400.pcd", *cloud);
+
+  std::cerr << "Cloud before filtering: " << std::endl;
+  std::cerr << *cloud << std::endl;
+  // 创建筛选对象
+  pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+  sor.setInputCloud(cloud);
+  //每个点要分析的邻居数量设置为50，标准偏差乘数为1。这意味着，所有距离查询点的平均距离大于1个标准差的点都将被标记为离群点并删除
+  sor.setMeanK(50);
+  sor.setStddevMulThresh(1.0);
+  sor.filter(*cloud_filtered);
+
+  std::cerr << "Cloud after filtering: " << std::endl;
+  std::cerr << *cloud_filtered << std::endl;
+
+  pcl::PCDWriter writer;
+  writer.write<pcl::PointXYZ> ("table_scene_lms400_inliers.pcd", *cloud_filtered, false);
+
+  //获得离群值
+  sor.setNegative(true);
+  sor.filter(*cloud_filtered);
+  writer.write<pcl::PointXYZ> ("table_scene_lms400_outliers.pcd", *cloud_filtered, false);
+}
+
+void test_Model()
+{
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_projected (new pcl::PointCloud<pcl::PointXYZ>);
+
+   //填充点云数据
+  cloud->width  = 5;
+  cloud->height = 1;
+  cloud->points.resize (cloud->width * cloud->height);
+
+  for (size_t i = 0; i < cloud->points.size (); ++i)
+  {
+    cloud->points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
+    cloud->points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
+    cloud->points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
+  }
+
+  std::cerr << "Cloud before projection: " << std::endl;
+  for (size_t i = 0; i < cloud->points.size (); ++i)
+    std::cerr << "    " << cloud->points[i].x << " " 
+                        << cloud->points[i].y << " " 
+                        << cloud->points[i].z << std::endl;
+
+  // 用X=Y=0,Z=1创建一组平面系数
+  pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
+  coefficients->values.resize (4);
+  coefficients->values[0] = coefficients->values[1] = 0;
+  coefficients->values[2] = 1.0;
+  coefficients->values[3] = 0;
+
+  //创建筛选对象
+  pcl::ProjectInliers<pcl::PointXYZ> proj;
+  proj.setModelType (pcl::SACMODEL_PLANE);
+  proj.setInputCloud (cloud);
+  proj.setModelCoefficients (coefficients);
+  proj.filter (*cloud_projected);
+
+  std::cerr << "Cloud after projection: " << std::endl;
+  for (size_t i = 0; i < cloud_projected->points.size (); ++i)
+    std::cerr << "    " << cloud_projected->points[i].x << " " 
+                        << cloud_projected->points[i].y << " " 
+                        << cloud_projected->points[i].z << std::endl;
+
+}

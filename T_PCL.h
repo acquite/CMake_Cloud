@@ -73,3 +73,15 @@ void test_gasd();
 void test_passThrough2();
 
 //voxelgrid
+#include<pcl/filters/voxel_grid.h>
+void test_voxelGrid();
+
+//statistcaloutlierRemoval
+#include<pcl/filters/statistical_outlier_removal.h>
+void test_statistical();
+
+//modelcofficients
+#include<pcl-1.8/pcl/ModelCoefficients.h>
+#include<pcl-1.8/pcl/filters/project_inliers.h>
+void test_Model();
+

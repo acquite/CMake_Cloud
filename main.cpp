@@ -13,8 +13,9 @@
 #include <cmath>
 #include "neuv_defs.hpp"
 
-#include "T_PCL.h"
+// #include "T_PCL.h"
 #include "T_Eigen.h"
+#include "T_PCL2.h"
 
 using namespace std;
 
@@ -207,14 +208,14 @@ void G_TestPCL()
           std::cerr << "    " << cloud.points[i].x << " " << cloud.points[i].y << " " << cloud.points[i].z << std::endl;
 }
 
-//-----------------------------------------------------NEUV 链接----------------------------------------------------
-// 获取时间戳
-double get_timestamp(void)
-{
-     struct timeval now;
-     gettimeofday(&now, 0);
-     return (double)(now.tv_sec) + (double)(now.tv_usec) / 1000000.0;
-}
+//-----------------------------------------------------NEUV 链接for (size_t i = 0; i < cloud.points.size(); ++i)
+		// std::cerr << "    " << cloud.points[i].x << " " << cloud.points[i].y << " " << cloud.points[i].z << std::endl;
+
+// {
+//      struct timeval now;
+//      gettimeofday(&now, 0);
+//      return (double)(now.tv_sec) + (double)(now.tv_usec) / 1000000.0;
+// }
 
 void showretval(int ret)
 {
@@ -467,7 +468,19 @@ int main(int argc, char **argv)
      //rops_feature---points_pcd---indices_txt---triangles_txt
      // test_rops(argc, argv);
 
-     test_passThrough2();
+     // test_passThrough2();
+     // test_voxelGrid();
+     // test_statistical();
+     // test_Model();
+
+//-------------------PCL2------------------------
+     // test_readPCD();
+     // test_loadPCD();
+     // test_addCloud(argc,argv);
+     // test_kdtree();
+     // test_coder();
+     // test_shape();
+     test_octree();
 
 //-------Eigen--------------
      // T_EigenRoation();
