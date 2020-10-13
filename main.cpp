@@ -479,8 +479,8 @@ int main(int argc, char **argv)
      // test_addCloud(argc,argv);
      // test_kdtree();
      // test_coder();
-     // test_shape();
-     test_octree();
+     test_shape();
+     // test_octree();
 
 //-------Eigen--------------
      // T_EigenRoation();
