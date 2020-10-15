@@ -161,3 +161,36 @@ boost::shared_ptr<pcl::visualization::PCLVisualizer> customColourVis(pcl::PointC
 //也可以绘制表征点云的其他特征，比如主曲率和几何特征，normalsVis函数中演示了如何实现点云的法线
 boost::shared_ptr<pcl::visualization::PCLVisualizer> normalsVis(
 	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud, pcl::PointCloud<pcl::Normal>::ConstPtr normals);
+
+//绘制普通形状
+//PCL visualizer可视化类允许用户在视窗中绘制一般图元，这个类常用于显示点云处理算法的可视化结果，例如 通过可视化球体
+//包围聚类得到的点云集以显示聚类结果，shapesVis函数用于实现添加形状到视窗中，添加了四种形状：从点云中的一个点到最后一个点
+//之间的连线，原点所在的平面，以点云中第一个点为中心的球体，沿Y轴的椎体
+boost::shared_ptr<pcl::visualization::PCLVisualizer> shapesVis(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud);
+
+//多视角显示
+//viewportsVis函数演示如何用多视角来显示点云计算法线的方法结果对比
+boost::shared_ptr<pcl::visualization::PCLVisualizer> viewportsVis(
+	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud, pcl::PointCloud<pcl::Normal>::ConstPtr normals1, pcl::PointCloud<pcl::Normal>::ConstPtr normals2);
+
+// 鼠标事件
+//每次响应这种事件都会在鼠标按下的位置上生成一个文本标签
+void keyboardEventOccurred(const pcl::visualization::KeyboardEvent &event,void* viewer_void);
+
+// 键盘事件
+// 按下r健，则删除前面鼠标所产生的文本标签（当按下R键时 3D相机仍然会重置）
+//所以在PCL中视窗中注册事件响应回调函数，不会覆盖其他成员对同一事件的响应
+void mouseEventOccurred (const pcl::visualization::MouseEvent &event,void* viewer_void);
+
+// 自定义交互
+//多数情况下，默认的鼠标和键盘交互设置不能满足用户的需求，用户想扩展函数的某一些功能，比如按下键盘时保存点云的信息，或者通过鼠标确定点云的位置，interactionCustomizationVis 函数进行演示如何捕捉鼠标和键盘事件，在窗口点击，将会显示一个2D的文本标签，按下r健出去文本
+boost::shared_ptr<pcl::visualization::PCLVisualizer> interactionCustomizationVis ();
+
+//控制入口
+// https://blog.csdn.net/qq_34719188/article/details/79174195#_260
+void printUsage (const char* progName);
+
+#include<pcl-1.8/pcl/console/parse.h>
+#include<pcl-1.8/pcl/common/impl/angles.hpp>
+#include<pcl-1.8/pcl/features/normal_3d.h>
+int test_MainPcl2(int argc,char** argv);

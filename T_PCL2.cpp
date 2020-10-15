@@ -514,3 +514,314 @@ boost::shared_ptr<pcl::visualization::PCLVisualizer> normalsVis(pcl::PointCloud<
 	viewer->initCameraParameters();
 	return (viewer);
 }
+
+boost::shared_ptr<pcl::visualization::PCLVisualizer> shapesVis(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud)
+{
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+	viewer->setBackgroundColor(0, 0, 0);
+	pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
+	viewer->addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "sample cloud");
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
+	viewer->addCoordinateSystem(1.0);
+	viewer->initCameraParameters();
+
+	/************************************************************************************************
+	绘制形状的实例代码，绘制点之间的连线，
+	*************************************************************************************************/
+
+	viewer->addLine<pcl::PointXYZRGB>(cloud->points[0],	cloud->points[cloud->size() - 1], "line");
+	//添加点云中第一个点为中心，半径为0.2的球体，同时可以自定义颜色
+	viewer->addSphere(cloud->points[0], 0.2, 0.5, 0.5, 0.0, "sphere");
+
+
+	//---------------------------------------
+	//-----Add shapes at other locations添加绘制平面使用标准平面方程ax+by+cz+d=0来定义平面，这个平面以原点为中心，方向沿着Z方向-----
+	//---------------------------------------
+	pcl::ModelCoefficients coeffs;
+	coeffs.values.push_back(0.0);
+	coeffs.values.push_back(0.0);
+	coeffs.values.push_back(1.0);
+	coeffs.values.push_back(0.0);
+	viewer->addPlane(coeffs, "plane");
+
+	//添加锥形的参数
+	coeffs.values.clear();
+	coeffs.values.push_back(0.3);
+	coeffs.values.push_back(0.3);
+	coeffs.values.push_back(0.0);
+	coeffs.values.push_back(0.0);
+	coeffs.values.push_back(1.0);
+	coeffs.values.push_back(0.0);
+	coeffs.values.push_back(5.0);
+	viewer->addCone(coeffs, "cone");
+
+	return (viewer);
+}
+
+boost::shared_ptr<pcl::visualization::PCLVisualizer> viewportsVis(
+	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud, pcl::PointCloud<pcl::Normal>::ConstPtr normals1, pcl::PointCloud<pcl::Normal>::ConstPtr normals2)
+{
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+	viewer->initCameraParameters();
+	//以上是创建视图的标准代码
+
+	int v1(0);  //创建新的视口
+	viewer->createViewPort(0.0, 0.0, 0.5, 1.0, v1);  //4个参数分别是X轴的最小值，最大值，Y轴的最小值，最大值，取值0-1，v1是标识
+	viewer->setBackgroundColor(0, 0, 0, v1);    //设置视口的背景颜色
+	viewer->addText("Radius: 0.01", 10, 10, "v1 text", v1);  //添加一个标签区别其他窗口  利用RGB颜色着色器并添加点云到视口中
+	pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
+	viewer->addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "sample cloud1", v1);
+
+
+	//对第二视口做同样的操作，使得做创建的点云分布于右半窗口，将该视口背景赋值于灰色，以便明显区别，虽然添加同样的点云，给点云自定义颜色着色
+	int v2(0);
+	viewer->createViewPort(0.5, 0.0, 1.0, 1.0, v2);
+	viewer->setBackgroundColor(0.3, 0.3, 0.3, v2);
+	viewer->addText("Radius: 0.1", 10, 10, "v2 text", v2);
+	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> single_color(cloud, 0, 255, 0);
+	viewer->addPointCloud<pcl::PointXYZRGB>(cloud, single_color, "sample cloud2", v2);
+
+	//为所有视口设置属性，
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud1");
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud2");
+	viewer->addCoordinateSystem(1.0);
+
+	//添加法线  每个视图都有一组对应的法线
+	viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal>(cloud, normals1, 10, 0.05, "normals1", v1);
+	 //添加需要显示的点云法向。cloud为原始点云模型，normal为法向信息，10表示需要显示法向的点云间隔，即每10个点显示一次法向，0.0５表示法向长度
+	viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal>(cloud, normals2, 10, 0.05, "normals2", v2);
+
+	return (viewer);
+}
+
+unsigned int text_id = 0;
+void keyboardEventOccurred(const pcl::visualization::KeyboardEvent &event,void* viewer_void)
+{
+	pcl::visualization::PCLVisualizer *viewer = static_cast<pcl::visualization::PCLVisualizer *> (viewer_void);
+	if (event.getKeySym() == "r" && event.keyDown())
+	{
+		std::cout << "r was pressed => removing all text" << std::endl;
+		char str[512];
+		for (unsigned int i = 0; i < text_id; ++i)
+		{
+			sprintf(str, "text#%03d", i);
+			viewer->removeShape(str);
+		}
+		text_id = 0;
+	}
+}
+
+void mouseEventOccurred (const pcl::visualization::MouseEvent &event,void* viewer_void)
+{
+	pcl::visualization::PCLVisualizer *viewer = static_cast<pcl::visualization::PCLVisualizer *> (viewer_void);
+	if (event.getButton () == pcl::visualization::MouseEvent::LeftButton &&
+      event.getType () == pcl::visualization::MouseEvent::MouseButtonRelease)
+	{
+		std::cout << "Left mouse button released at position (" << event.getX () << ", " << event.getY () << ")" << std::endl;
+
+		char str[512];
+		sprintf (str, "text#%03d", text_id ++);
+		viewer->addText ("clicked here", event.getX (), event.getY (), str);
+	}
+}
+
+boost::shared_ptr<pcl::visualization::PCLVisualizer> interactionCustomizationVis ()
+{
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+	viewer->setBackgroundColor (0, 0, 0);
+ 	//以上是实例化视窗的标准代码
+	
+	viewer->addCoordinateSystem (1.0);
+	//分别注册响应键盘和鼠标事件，keyboardEventOccurred  mouseEventOccurred回调函数，需要将boost::shared_ptr强制转换为void*
+	viewer->registerKeyboardCallback (keyboardEventOccurred, (void*)viewer.get ());
+	viewer->registerMouseCallback (mouseEventOccurred, (void*)viewer.get ());
+	return (viewer);
+}
+
+void printUsage_1 (const char* progName)
+{
+	std::cout << "\n\nUsage: "<<progName<<" [options]\n\n"
+            << "Options:\n"
+            << "-------------------------------------------\n"
+            << "-h           this help\n"
+            << "-s           Simple visualisation example\n"
+            << "-r           RGB colour visualisation example\n"
+            << "-c           Custom colour visualisation example\n"
+            << "-n           Normals visualisation example\n"
+            << "-a           Shapes visualisation example\n"
+            << "-v           Viewports example\n"
+            << "-i           Interaction Customization example\n"
+            << "\n\n";
+}
+
+int test_MainPcl2(int argc,char** argv)
+{
+	// --------------------------------------
+	// -----Parse Command Line Arguments-----
+	// --------------------------------------
+	if (pcl::console::find_argument (argc, argv, "-h") >= 0)
+ 	{
+		printUsage_1(argv[0]);
+   		return 0;
+	}
+	bool simple(false), rgb(false), custom_c(false), normals(false),shapes(false), viewports(false), interaction_customization(false);
+
+	if (pcl::console::find_argument (argc, argv, "-s") >= 0)
+  	{
+		simple = true;
+    	std::cout << "Simple visualisation example\n";
+  	}
+  	else if (pcl::console::find_argument (argc, argv, "-c") >= 0)
+ 	{
+    	custom_c = true;
+  	  	std::cout << "Custom colour visualisation example\n";
+	}
+  	else if (pcl::console::find_argument (argc, argv, "-r") >= 0)
+  	{
+    	rgb = true;
+    	std::cout << "RGB colour visualisation example\n";
+  	}
+  	else if (pcl::console::find_argument (argc, argv, "-n") >= 0)
+  	{
+    	normals = true;
+    	std::cout << "Normals visualisation example\n";
+  	}
+  	else if (pcl::console::find_argument (argc, argv, "-a") >= 0)
+  	{
+		shapes = true;
+		std::cout << "Shapes visualisation example\n";
+  	}
+  	else if (pcl::console::find_argument (argc, argv, "-v") >= 0)
+  	{
+   		viewports = true;
+    	std::cout << "Viewports example\n";
+  	}
+  	else if (pcl::console::find_argument (argc, argv, "-i") >= 0)
+  	{
+		interaction_customization = true;
+    	std::cout << "Interaction Customization example\n";
+  	}
+  	else
+  	{
+   		printUsage_1(argv[0]);
+    	return 0;
+  	}
+
+	// ------------------------------------
+	// -----Create example point cloud-----
+	// ------------------------------------
+	pcl::PointCloud<pcl::PointXYZ>::Ptr basic_cloud_ptr (new pcl::PointCloud<pcl::PointXYZ>);
+  	pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud_ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
+
+	std::cout << "Genarating example point clouds.\n\n";
+
+	// We're going to make an ellipse extruded along the z-axis. The colour for
+	// the XYZRGB cloud will gradually go from red to green to blue.
+	uint8_t r(255), g(15), b(15);
+	for (float z(-1.0); z <= 1.0; z += 0.05)
+  	{
+		for (float angle(0.0); angle <= 360.0; angle += 5.0)
+    	{
+		// 圆柱面的参数方程为：
+		// x = R*cos(θ);
+		// y = R*sin(θ); 
+		// z = z;
+		// 其中 θ范围是[-2*PI, 2*PI), z的范围是(-∞，+∞）
+
+		// 球面的参数方程是：
+		// x = R*sin(θ)*cos(ψ); 
+		// y = R*sin(θ)*sin(ψ); 
+		// z = R*cos(θ);
+		// 其中θ∈[0, PI), ψ∈[0, 2*PI)
+
+			pcl::PointXYZ basic_point;
+    		basic_point.x = 0.5 * cosf (pcl::deg2rad(angle));
+     		basic_point.y = sinf (pcl::deg2rad(angle));
+    		basic_point.z = z;
+    		basic_cloud_ptr->points.push_back(basic_point);
+
+			pcl::PointXYZRGB point;
+    		point.x = basic_point.x;
+    		point.y = basic_point.y;
+    		point.z = basic_point.z;
+    		uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
+            static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
+      		point.rgb = *reinterpret_cast<float*>(&rgb);
+      		point_cloud_ptr->points.push_back (point);
+		}
+		if(z<0.0)
+		{
+			r-=12;
+			g+=12;
+		}
+		 else
+    	{
+    		g -= 12;
+      		b += 12;
+    	}
+	}
+
+	basic_cloud_ptr->width = (int) basic_cloud_ptr->points.size ();
+	basic_cloud_ptr->height = 1;
+	point_cloud_ptr->width = (int) point_cloud_ptr->points.size ();
+	point_cloud_ptr->height = 1;
+
+	// ----------------------------------------------------------------
+	// -----Calculate surface normals with a search radius of 0.05-----
+	// ----------------------------------------------------------------
+	pcl::NormalEstimation<pcl::PointXYZRGB,pcl::Normal> ne;
+	ne.setInputCloud (point_cloud_ptr);
+	pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB> ());
+ 
+	ne.setSearchMethod (tree);
+	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals1 (new pcl::PointCloud<pcl::Normal>);
+	ne.setRadiusSearch (0.05);
+	ne.compute (*cloud_normals1);
+
+
+	// ---------------------------------------------------------------
+	// -----Calculate surface normals with a search radius of 0.1-----
+	// ---------------------------------------------------------------
+	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals2 (new pcl::PointCloud<pcl::Normal>);
+	ne.setRadiusSearch (0.1);
+	ne.compute (*cloud_normals2);
+
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
+	if (simple)
+  	{
+		viewer = simpleVis(basic_cloud_ptr);
+ 	}
+  	else if (rgb)
+  	{
+    	viewer = rgbVis(point_cloud_ptr);
+  	}
+  	else if (custom_c)
+  	{
+    	viewer = customColourVis(basic_cloud_ptr);
+  	}
+  	else if (normals)
+  	{
+    	viewer = normalsVis(point_cloud_ptr, cloud_normals2);
+  	}
+  	else if (shapes)
+  	{
+    	viewer = shapesVis(point_cloud_ptr);
+ 	}
+ 	 else if (viewports)
+  	{
+		viewer = viewportsVis(point_cloud_ptr, cloud_normals1, cloud_normals2);
+ 	}
+	else if (interaction_customization)
+	{
+		viewer = interactionCustomizationVis();
+	}
+
+	//--------------------
+	// -----Main loop-----
+	//--------------------
+	while (!viewer->wasStopped ())
+  	{
+    	viewer->spinOnce (100);
+   	 	boost::this_thread::sleep (boost::posix_time::microseconds (100000));
+  	}
+}
