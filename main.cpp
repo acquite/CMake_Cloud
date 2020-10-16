@@ -14,8 +14,10 @@
 #include "neuv_defs.hpp"
 
 // #include "T_PCL.h"
+// #include "T_PCL3.h"
+#include "T_PCL4.h"
 #include "T_Eigen.h"
-#include "T_PCL2.h"
+
 
 using namespace std;
 
@@ -474,6 +476,7 @@ int main(int argc, char **argv)
      // test_Model();
 
 //-------------------PCL2------------------------
+     // #include "T_PCL2.h"
      // test_readPCD();
      // test_loadPCD();
      // test_addCloud(argc,argv);
@@ -481,8 +484,18 @@ int main(int argc, char **argv)
      // test_coder();
      // test_shape();
      // test_octree();
+     // test_MainPcl2(argc,argv);
 
-     test_MainPcl2(argc,argv);
+
+//------------------PCL3-----------------------------------
+     // test_mainPCL3(argc,argv);
+
+//-------------------PCL4-------------------------------------
+     // test_mainPCL4(argc,argv);
+     // test_VoxGridPCL4();
+     // test_sorPCL4();
+     // test_proPCL4();
+     test_segPCL4();
 
 //-------Eigen--------------
      // T_EigenRoation();
