@@ -42,4 +42,4 @@ int test_segPCL4();
 #include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/filters/conditional_removal.h>
 
-int test_rcRemovalPCL4();
+int test_rcRemovalPCL4(int argc, char** argv);

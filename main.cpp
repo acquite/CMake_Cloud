@@ -10,14 +10,16 @@
 #include <pcl/point_types.h>
 #include <pcl/visualization/cloud_viewer.h>
 
-#include <cmath>
 #include "neuv_defs.hpp"
+#include <cmath>
 
 // #include "T_PCL.h"
 // #include "T_PCL3.h"
-#include "T_PCL4.h"
-#include "T_Eigen.h"
+// #include "T_PCL4.h"
+//  #include "T_PCL5.h"
+#include "T_PCL6.h"
 
+#include "T_Eigen.h"
 
 using namespace std;
 
@@ -211,7 +213,7 @@ void G_TestPCL()
 }
 
 //-----------------------------------------------------NEUV 链接for (size_t i = 0; i < cloud.points.size(); ++i)
-		// std::cerr << "    " << cloud.points[i].x << " " << cloud.points[i].y << " " << cloud.points[i].z << std::endl;
+// std::cerr << "    " << cloud.points[i].x << " " << cloud.points[i].y << " " << cloud.points[i].z << std::endl;
 
 // {
 //      struct timeval now;
@@ -458,7 +460,7 @@ int main(int argc, char **argv)
     std::cout<<"距离参考："<<idis<<std::endl;
 #endif
 
-//--------------PCL-----------------
+     //--------------PCL-----------------
      // test3( argc,  argv);
      // test_passThrough();
      // test_Integral();
@@ -475,7 +477,7 @@ int main(int argc, char **argv)
      // test_statistical();
      // test_Model();
 
-//-------------------PCL2------------------------
+     //-------------------PCL2------------------------
      // #include "T_PCL2.h"
      // test_readPCD();
      // test_loadPCD();
@@ -486,20 +488,28 @@ int main(int argc, char **argv)
      // test_octree();
      // test_MainPcl2(argc,argv);
 
-
-//------------------PCL3-----------------------------------
+     //------------------PCL3-----------------------------------
      // test_mainPCL3(argc,argv);
 
-//-------------------PCL4-------------------------------------
+     //-------------------PCL4-------------------------------------
      // test_mainPCL4(argc,argv);
      // test_VoxGridPCL4();
      // test_sorPCL4();
      // test_proPCL4();
-     test_segPCL4();
+     // test_segPCL4();
+     // test_rcRemovalPCL4(argc,argv);
+
+     //--------------------------PCL5-----------------------------------
+     // test_sacPCL5(argc, argv);
+
+     //--------------------------PCL6-----------------------------------
+     // test_rImgPCL6();
+     // test_ordarRImgPCL6(argc, argv);
+     test_borderPCL6(argc, argv);
 
 //-------Eigen--------------
-     // T_EigenRoation();
-     // T_EigrnTest1();
+// T_EigenRoation();
+// T_EigrnTest1();
 
 //-------STL--------
 #include "T_STL.h"

@@ -69,5 +69,7 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "*.ipp": "cpp"
-    }
+    },
+    "C_Cpp.clang_format_sortIncludes": true,
+    "editor.formatOnSave": true
 }
