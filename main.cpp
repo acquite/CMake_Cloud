@@ -505,7 +505,7 @@ int main(int argc, char **argv)
      //--------------------------PCL6-----------------------------------
      // test_rImgPCL6();
      // test_ordarRImgPCL6(argc, argv);
-     test_borderPCL6(argc, argv);
+     // test_borderPCL6(argc, argv);
 
 //-------Eigen--------------
 // T_EigenRoation();
