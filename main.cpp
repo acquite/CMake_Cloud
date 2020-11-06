@@ -17,7 +17,10 @@
 // #include "T_PCL3.h"
 // #include "T_PCL4.h"
 //  #include "T_PCL5.h"
-#include "T_PCL6.h"
+// #include "T_PCL6.h"
+// #include"T_PCL7.h"
+
+#include "T_PCLF1.h"
 
 #include "T_Eigen.h"
 
@@ -506,6 +509,15 @@ int main(int argc, char **argv)
      // test_rImgPCL6();
      // test_ordarRImgPCL6(argc, argv);
      // test_borderPCL6(argc, argv);
+
+      /*--------------------------PCL7-----------------------------------*/
+     // test_normalPCL7();
+     // test_normalOrderPCL7();
+
+
+     
+     /*--------------------------T_PCLF1-----------------------------------*/
+
 
 //-------Eigen--------------
 // T_EigenRoation();
