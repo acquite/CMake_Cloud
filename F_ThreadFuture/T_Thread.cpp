@@ -95,3 +95,21 @@ void G_CutThreadTest()
     std::cout << "参照时间花费：" << (double)GetTickCount() - t << std::endl;
     std::cout << "总值(多线程）: " << sum << std::endl;
 }
+
+
+int G_TestFuture()
+{
+  // 假装我们计算了很久
+  std::this_thread::sleep_for(std::chrono::seconds(40));
+  return 42;
+}
+
+
+int G_TestFutureIn()
+{
+    auto fut = std::async(std::launch::async, G_TestFuture);
+    std::cout << "I am waiting now\n";
+    std::cout << "Answer: " << fut.get()
+       << '\n';
+}
+

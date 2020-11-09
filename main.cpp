@@ -520,7 +520,8 @@ int main(int argc, char **argv)
      /*--------------------------T_PCLF1-----------------------------------*/
 
       /*--------------------------T_Thread-----------------------------------*/
-     G_CutThreadTest();
+     // G_CutThreadTest();
+     G_TestFutureIn();
 
 //-------Eigen--------------
 // T_EigenRoation();
