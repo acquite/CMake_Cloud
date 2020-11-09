@@ -28,6 +28,9 @@ link_directories(neuvsdk)
 include_directories(./F_PCL)#添加目录路径
 add_subdirectory(F_PCL)#添加F_PCL文件夹中的库
 
+#自定义F_Thread库
+include_directories(./F_ThreadFuture)#添加目录路径
+add_subdirectory(F_ThreadFuture)#添加F_PCL文件夹中的库
 
 
 
@@ -58,6 +61,7 @@ target_link_libraries(eigenTest neuvsdk)
 
 #将目录下的F_PCL库链接上可执行文件eigenTest
 target_link_libraries(eigenTest libF_PCL)
+target_link_libraries(eigenTest libF_Thread)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

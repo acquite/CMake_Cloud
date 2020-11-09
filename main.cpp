@@ -21,6 +21,7 @@
 // #include"T_PCL7.h"
 
 #include "T_PCLF1.h"
+#include "T_Thread.h"
 
 #include "T_Eigen.h"
 
@@ -518,6 +519,8 @@ int main(int argc, char **argv)
      
      /*--------------------------T_PCLF1-----------------------------------*/
 
+      /*--------------------------T_Thread-----------------------------------*/
+     G_CutThreadTest();
 
 //-------Eigen--------------
 // T_EigenRoation();
