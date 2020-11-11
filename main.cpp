@@ -19,9 +19,11 @@
 //  #include "T_PCL5.h"
 // #include "T_PCL6.h"
 // #include"T_PCL7.h"
+// #include"T_PCL8.h"
+// #include"T_PCL9.h"
 
 #include "T_PCLF1.h"
-#include "T_Thread.h"
+// #include "T_Thread.h"
 
 #include "T_Eigen.h"
 
@@ -514,14 +516,27 @@ int main(int argc, char **argv)
       /*--------------------------PCL7-----------------------------------*/
      // test_normalPCL7();
      // test_normalOrderPCL7();
+     // test_IntegralPCL7();
+     // test_NarfPCL7( argc,  argv);
 
 
-     
+     /************************PCL8****************************************/
+     // #include"T_PCL8.h"
+     // test_mlsPCL8();
+     // test_PlanePCL8();
+     // test_ICPPCL8();
+     // test_ICPPcl8(argc,  argv);
+
+     /************************PCL8****************************************/
+     // test_switchPCL9(argc, argv);
+     // test_nanPCL9(argc, argv);
+
      /*--------------------------T_PCLF1-----------------------------------*/
+     test_InitPCLF1();
 
-      /*--------------------------T_Thread-----------------------------------*/
+     /*--------------------------T_Thread-----------------------------------*/
      // G_CutThreadTest();
-     G_TestFutureIn();
+     // G_TestFutureIn();
 
 //-------Eigen--------------
 // T_EigenRoation();

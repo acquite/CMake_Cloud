@@ -8,7 +8,7 @@
             "name": "(gdb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/a.out",
+            "program": "${workspaceFolder}/build/eigenTest",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

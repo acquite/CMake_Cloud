@@ -49,7 +49,7 @@ enable_testing()
 # message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
 # 手动添加目录下的文件
-add_executable(eigenTest main.cpp T_PCL.cpp T_Eigen.cpp T_STL.cpp T_PCL2.cpp T_PCL3.cpp T_PCL4.cpp T_PCL5.cpp T_PCL6.cpp T_PCL7.cpp)
+add_executable(eigenTest main.cpp T_PCL.cpp T_Eigen.cpp T_STL.cpp T_PCL2.cpp T_PCL3.cpp T_PCL4.cpp T_PCL5.cpp T_PCL6.cpp T_PCL7.cpp T_PCL8.cpp T_PCL9.cpp)
 
 
 
